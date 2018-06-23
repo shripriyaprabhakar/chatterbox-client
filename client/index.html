@@ -26,8 +26,20 @@
   <body>
     <div id="main">
       <h1>chatterbox</h1>
+      <button id="refreshButton">Refresh</button>
       <!-- Your HTML goes here! -->
     </div>
+    <form type="messageField">
+      <input class="messageBox" type="text"><br><br>
+      <input type="submit" id="submitMessage">
+    </form>
     <div id="chats"></div>
+    <script type="text/javascript">
+      $(document).ready(function() {
+
+        app.init();
+
+      });
+    </script>
   </body>
 </html>

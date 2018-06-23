@@ -2,7 +2,19 @@
 var app = {
 
   init: function () {
-    $('#send .submit').submit(app.handleSubmit);
+    // app.send();
+    app.fetch();
+
+    $('#testForm').submit(function (e) {
+      e.preventDefault();
+      app.handleSubmit();
+    });
+
+    $('#refreshButton').on('click', function(e) {
+      app.clearMessages();
+      app.fetch();
+    });
+
   },
 
   send: function (message) {
@@ -25,11 +37,16 @@ var app = {
   fetch: function () {
     $.ajax({
       // This is the url you should use to communicate with the parse API server.
+      url: 'http://parse.sfm8.hackreactor.com/chatterbox/classes/messages',
       type: 'GET',
-      data: JSON.stringify(message),
+      // data: JSON.stringify(message),
       contentType: 'application/json',
+      data: {'order': '-createdAt'},
       success: function (data) {
-        console.log('chatterbox: Message sent');
+
+        _.each(data.results, function(dataObject) {
+          app.renderMessage(dataObject);
+        });
       },
       error: function (data) {
         // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -44,15 +61,21 @@ var app = {
 
   renderMessage: function (message) {
     //we need to figure out way to display message in the DOM
-    var messageDOM = $('<div id="message">' + message.text + '</div>');
-    var userNameDOM = $('<a src="#" class="username">' + message.username + '</a>');
+    var messageDOM = $('<p id="message">' + app.escapeSequence(message.text) + '</p>');
+    var userNameDOM = $('<a src="#" class="username">' + app.escapeSequence(message.username) + '</a>');
+    
     userNameDOM.on('click', app.handleUsernameClick);
-    var submitButton = $('<button type="submit" id="send" class="submit">Submit</button>');
-    submitButton.submit(app.handleSubmit);
-    var $message = $('<div></div>');
-    $message.append(messageDOM, userNameDOM, submitButton);
+    // var $submitForm = $('<form class="postMessage"><button type="submit">Submit</button></form>');
+
+    var $message = $('<div class="postedMessage"></div>');
+    $message.append(messageDOM, userNameDOM);
 
     $('#chats').append($message);
+    // $submitForm.submit(function (e) {
+    //   e.preventDefault();
+    //   app.handleSubmit();
+    // });
+
   },
 
   renderRoom: function (room) {
@@ -63,10 +86,33 @@ var app = {
   
   handleUsernameClick: function (event) {
     //add username to friend list
+    console.log('hello!');
   },
 
   handleSubmit: function () {
-    console.log('test');
+    var message = {
+      username: /username=(.*)/.exec(window.location.search)[1],
+      text: $('.messageBox')[0].value,
+      roomname: 'Room 136a'
+    };
+    app.send(message);
+  },
+
+  escapeCharacters: {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+    '/': '&#x2F;',
+    '`': '&#x60;',
+    '=': '&#x3D;'
+  },
+
+  escapeSequence: function (string) {
+    return String(string).replace(/[&<>"'`=\/]/g, function (s) {
+      return app.escapeCharacters[s];
+    });
   }
   
 };
