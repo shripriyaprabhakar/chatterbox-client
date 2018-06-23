@@ -5,7 +5,7 @@ var app = {
     // app.send();
     app.fetch();
 
-    $('#testForm').submit(function (e) {
+    $('#messageForm').submit(function (e) {
       e.preventDefault();
       app.handleSubmit();
     });
@@ -26,11 +26,13 @@ var app = {
       contentType: 'application/json',
       success: function (data) {
         console.log('chatterbox: Message sent');
+        app.fetch();
       },
       error: function (data) {
         // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
         console.error('chatterbox: Failed to send message', data);
       }
+      
     });
   },
   
@@ -43,7 +45,7 @@ var app = {
       contentType: 'application/json',
       data: {'order': '-createdAt'},
       success: function (data) {
-
+        $('#chats').children().remove();
         _.each(data.results, function(dataObject) {
           app.renderMessage(dataObject);
         });
