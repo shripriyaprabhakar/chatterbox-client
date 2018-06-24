@@ -33,6 +33,15 @@
       <input class="messageBox" type="text"><br><br>
       <input type="submit" id="submitMessage">
     </form>
+    <div>
+      <span>
+        <select class="roomSelect" onchange="if (this.selectedIndex) app.handleListFilter();">
+        </select>
+        <span class="friendList">Friends: </span>
+        <span class="friendNames">This is a test</span>
+      </span>
+    </div>
+
     <div id="chats"></div>
     <script type="text/javascript">
       $(document).ready(function() {
@@ -41,5 +50,6 @@
 
       });
     </script>
+
   </body>
 </html>

@@ -84,7 +84,14 @@ form input[type=text] {
 }
 
 .friend {
-    color: #fff;
-    background-color: #0090da;
+    font-weight: bold;
+    color: #000;
 }
 
+.username {
+    cursor: pointer;
+}
+
+.hiddenFriend {
+    visibility: hidden
+}
