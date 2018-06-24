@@ -12,17 +12,11 @@ var app = {
     });
 
     $('#refreshButton').on('click', function(e) {
+      let currentRoomName = $('.roomSelect').find('option:selected').text();
       app.clearRoomList();
       app.fetch();
+      // app.handleListFilter(currentRoomName);
     });
-    
-    // $('.roomname').on('click', function(e) {
-    //   // app.clearRoomList();
-    //   debugger;
-    //   $('#chats').children().toggle();
-    //   app.handleListFilter();
-    //   // $('#chats').append('.roomname');
-    // });
 
   },
 
@@ -63,8 +57,9 @@ var app = {
           roomnames.add(app.escapeSequence(dataObject.roomname));
         });
        
+        var $blank = $('<option></option>');
         var $showAll = $('<option>Show All</option>');
-        $('.roomSelect').append($showAll);
+        $('.roomSelect').append($blank, $showAll);
         
         for (let roomname of roomnames) {
           var $roomname = $('<option>' + roomname + '</option>');
@@ -72,6 +67,7 @@ var app = {
         }
         
         app.boldAllFriends();
+        
       },
 
       error: function (data) {
@@ -92,19 +88,19 @@ var app = {
   renderMessage: function (message) {
     
     //we need to figure out way to display message in the DOM
-    var $text = $('<div class="text">' + app.escapeSequence(message.text) + '</div>');
-    var $username = $('<a src="#" class="username">' + app.escapeSequence(message.username) + '</a>');
+    var $text = $('<div class="text">Message: ' + app.escapeSequence(message.text) + '</div>');
+    var $username = $('<a src="#" class="username">Username: ' + app.escapeSequence(message.username) + '</a>');
     var $roomname = $('<div class="roomname">' + app.escapeSequence(message.roomname) + '</div>');
     
     // app.roomName.add(app.escapeSequence(message.roomname)); 
 
-    var $break = $('<br>');
+    // var $break = $('<br>');
     
     $username.on('click', app.handleUsernameClick);
 
     var $message = $('<div class="postedMessage"></div>');
 
-    $message.append($text, $username, $roomname, $break);
+    $message.append($text, $username, $roomname);
   
 
     $('#chats').append($message);
@@ -155,16 +151,16 @@ var app = {
     var message = {
       username: /username=(.*)/.exec(window.location.search)[1],
       text: $('.messageBox')[0].value,
-      roomname: 'This is a Specific Room Name'
+      roomname: $('.roomSelect').find('option:selected').text()
     };
     app.send(message);
     console.log('submitted');
   },
   
-  handleListFilter: function () {
-    let selectedRoomName = $('.roomSelect').find('option:selected').text();
-    debugger;
-    if (selectedRoomName === "Show All") {
+  handleListFilter: function (passedRoomName) {
+    let selectedRoomName = passedRoomName || $('.roomSelect').find('option:selected').text();
+    // debugger;
+    if (selectedRoomName === 'Show All') {
       $('.postedMessage').toggle(true);      
     } else {
       $('.postedMessage').toggle(false);

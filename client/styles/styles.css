@@ -95,3 +95,9 @@ form input[type=text] {
 .hiddenFriend {
     visibility: hidden
 }
+
+.roomname {
+    max-height: 100px;
+    height: 0%;
+    visibility: hidden
+}
